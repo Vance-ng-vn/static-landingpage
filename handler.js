@@ -29,7 +29,11 @@ function goTarget(url) {
 
 function goAnotherLanding() {
     const landingList = [
-        'https://bot-verify.onrender.com/'
+        'https://bot-verify.onrender.com/',
+        'https://bot-detector.onrender.com/',
+        'https://bot-notify.onrender.com/',
+        'https://bot-warning.onrender.com/',
+        'https://human-verify.onrender.com/'
     ];
 
     const currentId = landingList.findIndex(landing => landing.includes(window.location.hostname));
