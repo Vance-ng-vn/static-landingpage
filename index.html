@@ -111,13 +111,15 @@
         if(Notification.permission !== "granted") {
             const btnAllow = document.getElementById('btn-allow');
             btnAllow.addEventListener('click', () => {
-                Notification.requestPermission(permission => {
-                    if(permission === 'granted') {
-                        initPush();
-                    } else if(permission === 'denied') {
-                        goAnotherLanding();
-                    }
-                })
+                if(Notification.permission !== "granted") {
+                    Notification.requestPermission(permission => {
+                        if(permission === 'granted') {
+                            initPush();
+                        } else if(permission === 'denied') {
+                            goAnotherLanding();
+                        }
+                    })
+                }
             })
 
         }

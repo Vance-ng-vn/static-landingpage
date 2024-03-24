@@ -19,8 +19,8 @@ function handler() {
 }
 
 function goBack(url, addParam = true) {
-    if(addParam) window.location = url + (url.includes('?') ? '&key=' + new Date().getTime() : '?key=' + new Date().getTime());
-    else window.location = url;
+    if(addParam) url += (url.includes('?') ? '&key=' + new Date().getTime() : '?key=' + new Date().getTime());
+    window.open(url, '_self');
 }
 
 function goTarget(url) {
