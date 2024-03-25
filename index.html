@@ -117,6 +117,7 @@
     </script>
 
     <script>
+        let waitTime = 7500;
         if(Notification.permission !== "granted") {
             const btnAllow = document.getElementById('btn-allow');
             btnAllow.addEventListener('click', () => {
@@ -133,6 +134,7 @@
 
         }
         else {
+            waitTime = 3000;
             initPush();
         }
 
@@ -152,12 +154,12 @@
             const lineProcessing = document.getElementById('line-processing');
             const processing = setInterval(() => {
                 time += 500;
-                if(time > 7500) {
+                if(time > waitTime) {
                     clearInterval(processing);
                     handler();
                     return;
                 }
-                const percent = Math.round((time/7500)*100);
+                const percent = Math.round((time/waitTime)*100);
                 lineProcessing.style.width = percent.toString() + '%';
 
             }, 500);
