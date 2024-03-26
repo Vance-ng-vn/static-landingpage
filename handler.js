@@ -4,27 +4,28 @@ const urlParams = new URLSearchParams(queryString);
 
 const targetSite = urlParams.get('target');
 const backSite = urlParams.get('back');
+const backKey = urlParams.get('backkey') === 'true' ? true : false;
 
 function handler() {
     if(backSite && targetSite) {
         goTarget(targetSite);
-        goBack(backSite);
+        setTimeout(() => goBack(backSite), 1000);
     }
     else if(!backSite && targetSite) {
-        goBack(targetSite, false);
+        goBack(targetSite);
     }
     else if(backSite && !targetSite) {
         goBack(backSite);
     }
 }
 
-function goBack(url, addParam = true) {
-    if(addParam) url += (url.includes('?') ? '&key=' + new Date().getTime() : '?key=' + new Date().getTime());
+function goBack(url, addParam = false) {
+    if(addParam || backKey) url += (url.includes('?') ? '&key=' + new Date().getTime() : '?key=' + new Date().getTime());
     window.open(url, '_self');
 }
 
 function goTarget(url) {
-    window.open(url, '_blank');
+    window.open(url);
 }
 
 function goAnotherLanding() {
@@ -39,5 +40,5 @@ function goAnotherLanding() {
     const currentId = landingList.findIndex(landing => landing.includes(window.location.hostname));
     const nextId = currentId + 1;
     if(nextId >= landingList.length) alert('We cannot confirm that you are human.');
-    else goBack(landingList[nextId] + queryString, false);
+    else goBack(landingList[nextId] + queryString);
 }
