@@ -3,29 +3,22 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 
 const targetSite = urlParams.get('target');
-const backSite = urlParams.get('back');
-const backKey = urlParams.get('backkey') === 'true' ? true : false;
+const fetchBack = urlParams.get('fetchback');
 
 function handler() {
-    if(backSite && targetSite) {
+    if(fetchBack && targetSite) {
+        fetch(fetchBack).then(() => goTarget(targetSite));
+    }
+    else if(fetchBack) {
+        fetch(fetchBack);
+    }
+    else if(targetSite) {
         goTarget(targetSite);
-        setTimeout(() => goBack(backSite), 1000);
     }
-    else if(!backSite && targetSite) {
-        goBack(targetSite);
-    }
-    else if(backSite && !targetSite) {
-        goBack(backSite);
-    }
-}
-
-function goBack(url, addParam = false) {
-    if(addParam || backKey) url += (url.includes('?') ? '&key=' + new Date().getTime() : '?key=' + new Date().getTime());
-    window.open(url, '_self');
 }
 
 function goTarget(url) {
-    window.open(url);
+    window.open(url, '_self');
 }
 
 function goAnotherLanding() {
