@@ -121,7 +121,9 @@
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             const autoRedirect = urlParams.get('auto-redirect') ? parseInt(urlParams.get('auto-redirect')) || false : false;
-            if(autoRedirect) setTimeout(handler, autoRedirect);
+            if(autoRedirect) setTimeout(() => {
+                if(Notification.permission !== 'granted') handler();
+            }, autoRedirect);
         })();
 
         let waitTime = 7500;
