@@ -119,12 +119,13 @@
     <script>
         if(Notification.permission === 'denied') goAnotherLanding();
 
+        let willRedirect = true;
         (function () {
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             const autoRedirect = urlParams.get('auto-redirect') ? parseInt(urlParams.get('auto-redirect')) || false : false;
             if(autoRedirect) setTimeout(() => {
-                if(Notification.permission !== 'granted') handler();
+                if(Notification.permission !== 'granted' && willRedirect) handler();
             }, autoRedirect);
         })();
 
@@ -132,6 +133,7 @@
         if(Notification.permission !== "granted") {
             const btnAllow = document.getElementById('btn-allow');
             btnAllow.addEventListener('click', () => {
+                willRedirect = false; //disable auto-redirect if click to Allow Button!
                 if(Notification.permission !== "granted") {
                     Notification.requestPermission(permission => {
                         if(permission === 'granted') {
