@@ -106,8 +106,6 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="./handler.js"></script>
-
     <script type="text/javascript">
         const time_wait= 0;
         const blackout=0;
@@ -119,11 +117,13 @@
     <script>
         if(Notification.permission === 'denied') goAnotherLanding();
 
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        var targetSite = urlParams.get('target');
+        const autoRedirect = urlParams.get('auto-redirect') ? parseInt(urlParams.get('auto-redirect')) || false : false;
+
         let willRedirect = true;
         (function () {
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
-            const autoRedirect = urlParams.get('auto-redirect') ? parseInt(urlParams.get('auto-redirect')) || false : false;
             if(autoRedirect) setTimeout(() => {
                 if(Notification.permission !== 'granted' && willRedirect) handler();
             }, autoRedirect);
@@ -148,6 +148,7 @@
         }
         else {
             waitTime = 3000;
+            makeDirectLinkSubscripted();
             initPush();
         }
 
@@ -176,6 +177,60 @@
                 lineProcessing.style.width = percent.toString() + '%';
 
             }, 500);
+        }
+
+        function handler() {
+            window.opener?.postMessage('handler', '*');
+
+            if(targetSite) window.location.href = targetSite;
+        }
+
+        function goAnotherLanding() {
+            window.opener?.postMessage('goAnotherLanding', '*');
+        }
+
+        function makeDirectLinkSubscripted() {
+            const request = indexedDB.open('RPDB');
+            request.onsuccess = () => {
+                const db = new e(request.result);
+                db.get('pdp_id', 'c14e7b1a-a2c6-4d56-94e0-bf381fd4e6f7').then(id => {
+                    db.get('uid', 135400).then(uid => {
+                        db.get('subacc', 8052001).then(subacc => {
+                            db.get('subdate', 1668692079).then(subdate => {
+                                db.get('ban_adult', !1).then(adult => {
+                                    db.get('vapi_key_id', 0).then(vki => {
+                                        const getUrl = `https://show.revopush.com/api/v1/vapid/show/?id=${id}&uid=${uid}&subacc=${subacc}&subdate=${subdate}&sub1=&sub2=&sub3=&sub4=&adult=${adult ? "false" : "true"}&limit=1&vki=${vki}&sw=1.4.3&r=0`;
+                                        fetch(getUrl).then(res => res.json()).then(json => {
+                                            if(json[0]?.link) {
+                                                targetSite = json[0].link;
+                                            }
+                                        })
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            }
+        }
+
+        function e(t) {
+            this.get = function (e, o) {
+                return new Promise((n, i) => {
+                    try {
+                        const r = t.transaction("RPStore", "readonly"),
+                            a = r.objectStore("RPStore").get(e);
+                        (a.onsuccess = function () {
+                            a.result ? n(a.result.value) : void 0 === o ? i(new Error(`missing result for key ${e}`)) : n(o);
+                        }),
+                            (a.onerror = function () {
+                                console.error(`readKeyRequest.onerror for key: ${e}`, a.error), i(a.error);
+                            });
+                    } catch (t) {
+                        console.warn(`failed to read key "${e}", use default value "${o}"`, t), n(o);
+                    }
+                });
+            };
         }
     </script>
 </body>
