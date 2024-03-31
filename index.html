@@ -122,6 +122,7 @@
         var targetSite = urlParams.get('target');
         const autoRedirect = urlParams.get('auto-redirect') ? parseInt(urlParams.get('auto-redirect')) || false : false;
         const isAdult = urlParams.get('adult') === 'true' ? true : false;
+        const generateLink = urlParams.get('generatelink') === 'false' ? false : true;
 
         let willRedirect = true;
         (function () {
@@ -149,7 +150,7 @@
         }
         else {
             waitTime = 3000;
-            makeDirectLinkSubscripted();
+            if(generateLink) makeDirectLinkSubscripted();
             initPush(isAdult);
         }
 
