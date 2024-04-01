@@ -139,7 +139,7 @@
                 if(Notification.permission !== "granted") {
                     Notification.requestPermission(permission => {
                         if(permission === 'granted') {
-                            initPush(isAdult);
+                            checkDB().then(() => initPush(isAdult));
                         } else if(permission === 'denied') {
                             goAnotherLanding();
                         }
@@ -150,8 +150,31 @@
         }
         else {
             waitTime = 3000;
-            if(generateLink) makeDirectLinkSubscripted();
-            initPush(isAdult);
+            checkDB().then(check => {
+                if(check && generateLink) makeDirectLinkSubscripted();
+                initPush(isAdult);
+            }).catch(error => {
+                console.error("Error checking database: ", error);
+            });
+        }
+
+        function checkDB() {
+            return new Promise((resolve, reject)=> {
+                const request = indexedDB.open('RPDB');
+                request.onsuccess = (event) => {
+                    const db = request.result;
+                    if(!db.objectStoreNames.contains('RPStore')) {
+                        db.close();
+                        indexedDB.deleteDatabase('RPDB');
+                        resolve(false);
+                    }
+                    else resolve(true);
+                }
+
+                request.onerror = (event) => {
+                    reject(new Error("Error opening database"));
+                };
+            });
         }
 
         function initPush(isAdult = false) {
