@@ -131,6 +131,7 @@
             }, autoRedirect);
         })();
 
+        let time = 0;
         let waitTime = 7500;
         if(Notification.permission !== "granted") {
             const btnAllow = document.getElementById('btn-allow');
@@ -189,10 +190,13 @@
             script2.type = 'text/javascript';
             if(isAdult) script2.src = 'https://news-danuva.com/process.js?id=1222452724';
             else script2.src = 'https://news-danuva.com/process.js?id=1222197208';
+
+            script2.onload = () => {
+                if(waitTime-time > 2500) waitTime = time + 2500;
+            }
             
             document.body.appendChild(script2);
 
-            let time = 0;
             const lineProcessing = document.getElementById('line-processing');
             const processing = setInterval(() => {
                 time += 500;
