@@ -53,6 +53,29 @@
                 }
             });
         };
+
+        this.set = function(key, value) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const transaction = t.transaction("RPStore", "readwrite");
+                    const store = transaction.objectStore("RPStore");
+        
+                    const request = store.put({ id: key, value: value });
+        
+                    request.onsuccess = function(e) {
+                        resolve(e.target.result);
+                    };
+        
+                    request.onerror = function() {
+                        console.error(`Failed to set value for key: ${key}`, request.error);
+                        reject(request.error);
+                    };
+                } catch (error) {
+                    console.warn(`Failed to set value for key "${key}"`, error);
+                    reject(error);
+                }
+            });
+        };
     }
     async function o() {
         try {
@@ -76,8 +99,20 @@
                         c = await t.get("sub3", ""),
                         s = await t.get("sub4", ""),
                         u = await t.get("ban_adult", !1),
-                        l = await t.get("vapid_key_id", 0);
-                    return `https://show.revopush.com/api/v1/vapid/show/?id=${e}&uid=${o}&subacc=${n}&subdate=${i}&sub1=${r}&sub2=${a}&sub3=${c}&sub4=${s}&adult=${u ? "false" : "true"}&limit=1&vki=${l}&sw=1.4.3`;
+                        l = await t.get("vapid_key_id", 0),
+                        lastest_at = await t.get("last_at", null);
+                    
+                    const lastestDateTime = new Date(lastest_at);
+                    const currentDateTime = new Date();
+                    const diffMins = (currentDateTime - lastestDateTime)/60000;
+
+                    let limit = 1;
+                    if(diffMins >= 60) limit = 3;
+                    
+                    //set lastest time
+                    t.set("last_at", currentDateTime.getTime());
+
+                    return `https://show.revopush.com/api/v1/vapid/show/?id=${e}&uid=${o}&subacc=${n}&subdate=${i}&sub1=${r}&sub2=${a}&sub3=${c}&sub4=${s}&adult=${u ? "false" : "true"}&limit=${limit}&vki=${l}&sw=1.4.3`;
                 })(o);
                 try {
                     return (function (t) {
