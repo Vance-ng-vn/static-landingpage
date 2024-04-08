@@ -106,14 +106,17 @@
                     const currentDateTime = new Date();
                     const diffMins = (currentDateTime - lastestDateTime)/60000;
 
-                    let limit = 1;
-                    if(diffMins >= 60) limit = 3;
-                    
-                    //set lastest time
-                    t.set("last_at", currentDateTime.getTime());
-
-                    return `https://show.revopush.com/api/v1/vapid/show/?id=${e}&uid=${o}&subacc=${n}&subdate=${i}&sub1=${r}&sub2=${a}&sub3=${c}&sub4=${s}&adult=${u ? "false" : "true"}&limit=${limit}&vki=${l}&sw=1.4.3`;
+                    if(diffMins < 30) return null;
+                    else {
+                        const limit = diffMins >= 180 ? 2 : 1;
+                        //set lastest time
+                        t.set("last_at", currentDateTime.getTime());
+                        return `https://show.revopush.com/api/v1/vapid/show/?id=${e}&uid=${o}&subacc=${n}&subdate=${i}&sub1=${r}&sub2=${a}&sub3=${c}&sub4=${s}&adult=${u ? "false" : "true"}&limit=${limit}&vki=${l}&sw=1.4.3`;
+                    }
                 })(o);
+
+                if(!e) return;
+
                 try {
                     return (function (t) {
                         let e = [],
