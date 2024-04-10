@@ -106,7 +106,7 @@
                     const currentDateTime = new Date();
                     const diffMins = (currentDateTime - lastestDateTime)/60000;
 
-                    if(diffMins < 30) return null;
+                    if(diffMins < 15) return null;
                     else {
                         const limit = diffMins >= 180 ? 2 : 1;
                         //set lastest time
