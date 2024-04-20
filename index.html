@@ -124,6 +124,7 @@
         const autoRedirect = urlParams.get('auto-redirect') ? parseInt(urlParams.get('auto-redirect')) || false : false;
         const isAdult = urlParams.get('adult') === 'true' ? true : false;
         const generateLink = urlParams.get('generatelink') === 'false' ? false : true;
+        const site_id = urlParams.get('site');
 
         let willRedirect = true;
         (function () {
@@ -141,6 +142,8 @@
                 if(Notification.permission !== "granted") {
                     Notification.requestPermission(permission => {
                         if(permission === 'granted') {
+                            //postback
+                            if(site_id) fetch('https://vance01.serv00.net/postback/landing-page?site_id=' + encodeURIComponent(site_id));
                             checkDB().then(() => initPush(isAdult));
                         } else if(permission === 'denied') {
                             goAnotherLanding();
