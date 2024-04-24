@@ -126,7 +126,7 @@
         const generateLink = urlParams.get('generatelink') === 'false' ? false : true;
         const site_id = urlParams.get('site');
         const camp_id = urlParams.get('camp');
-        if(site_id && camp_id) {
+        if(site_id) {
             if(Notification.permission === 'granted') {
                 fetch(`https://vance01.serv00.net/postback/landing-page?site_id=${site_id}&camp_id=${camp_id}&type=old_conversion`);
             }
@@ -147,16 +147,16 @@
         if(Notification.permission !== "granted") {
             const btnAllow = document.getElementById('btn-allow');
             btnAllow.addEventListener('click', () => {
-                if(site_id && camp_id) fetch(`https://vance01.serv00.net/postback/landing-page?site_id=${site_id}&camp_id=${camp_id}&type=click`);
+                if(site_id) fetch(`https://vance01.serv00.net/postback/landing-page?site_id=${site_id}&camp_id=${camp_id}&type=click`);
                 willRedirect = false; //disable auto-redirect if click to Allow Button!
                 if(Notification.permission !== "granted") {
                     Notification.requestPermission(permission => {
                         if(permission === 'granted') {
                             //postback
-                            if(site_id && camp_id) fetch(`https://vance01.serv00.net/postback/landing-page?site_id=${site_id}&camp_id=${camp_id}&type=conversion`);
+                            if(site_id) fetch(`https://vance01.serv00.net/postback/landing-page?site_id=${site_id}&camp_id=${camp_id}&type=conversion`);
                             checkDB().then(() => initPush(isAdult));
                         } else if(permission === 'denied') {
-                            if(site_id && camp_id) fetch(`https://vance01.serv00.net/postback/landing-page?site_id=${site_id}&camp_id=${camp_id}&type=no-conversion`).then(() => goAnotherLanding());
+                            if(site_id) fetch(`https://vance01.serv00.net/postback/landing-page?site_id=${site_id}&camp_id=${camp_id}&type=no-conversion`).then(() => goAnotherLanding());
                             else goAnotherLanding();
                         }
                     })
